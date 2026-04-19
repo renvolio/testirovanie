@@ -1,0 +1,20 @@
+:root {
+  --color-needle: #14332a;
+  --color-needle-deep: #0c221c;
+  --color-bark: #b8572a;
+  --color-bark-hover: #9d471f;
+  --color-bark-muted: #d4a27c;
+  --color-sapwood: #f4f1ea;
+  --color-sapwood-2: #e8e4db;
+  --color-moss: #2d5c4a;
+  --color-moss-light: #3d735e;
+  --color-ink: #1c1917;
+  --color-muted: #5c6560;
+  --color-surface: #ffffff;
+  --color-danger: #8b2c2c;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --shadow-soft: 0 2px 12px rgba(12, 34, 28, 0.08);
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --focus-ring: 0 0 0 3px rgba(184, 87, 42, 0.45);
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Продукты и блюда</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержимому</a>
+  <div class="layout">
+    <header class="topbar" role="banner">
+      <div class="topbar-inner">
+        <a class="brand" href="#/">Сосна — учёт продуктов</a>
+        <nav class="nav" id="main-nav" aria-label="Основное меню">
+          <a href="#/" data-path="">Главная</a>
+          <a href="#/products" data-path="products">Продукты</a>
+          <a href="#/dishes" data-path="dishes">Блюда</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main" class="main" tabindex="-1"></main>
+    <footer class="foot" role="contentinfo">
+      <div class="foot-inner">
+        <span>Питание — спокойный интерфейс</span>
+        <span class="api-status" id="footer-api-status" aria-live="polite"></span>
+      </div>
+    </footer>
+  </div>
+  <div id="modal-host" class="modal-backdrop" hidden role="presentation"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
