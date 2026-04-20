@@ -4,11 +4,11 @@
  */
 function detectDefaultApiBase() {
   const { protocol, hostname } = window.location;
-  if (protocol === "file:" || !hostname) return "http://localhost:5000";
+  if (protocol === "file:" || !hostname) return "http://localhost:5001";
   if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return "http://localhost:5000";
+    return "http://localhost:5001";
   }
-  return `${protocol}//${hostname}:5000`;
+  return `${protocol}//${hostname}:5001`;
 }
 
 export const API_BASE = (window.__API_BASE__ || detectDefaultApiBase()).replace(/\/$/, "");

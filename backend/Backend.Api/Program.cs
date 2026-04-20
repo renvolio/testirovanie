@@ -31,28 +31,24 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
         policy.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
-
 var app = builder.Build();
 
+app.UseRouting();
+app.UseCors("AllowFrontend"); // Используем имя политики!
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-if (!builder.Configuration.GetValue<bool>("DisableHttpsRedirection"))
-{
-    app.UseHttpsRedirection();
-}
 
-app.UseCors();
 
 app.UseAuthorization();
 

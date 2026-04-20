@@ -19,7 +19,8 @@ public class DishService : IDishService
         DishListQuery query,
         CancellationToken cancellationToken = default)
     {
-        var q = _db.Dishes
+        // Явно указываем тип IQueryable, чтобы можно было комбинировать Include и Where
+        IQueryable<Backend.Api.Models.Entities.Dish> q = _db.Dishes
             .AsNoTracking()
             .Include(d => d.Ingredients)
             .ThenInclude(i => i.Product);
@@ -42,7 +43,9 @@ public class DishService : IDishService
             q = q.Where(d => d.Name.ToLower().Contains(term));
         }
 
+        // Сортировка и выполнение запроса
         var items = await q.OrderBy(d => d.Name).ToListAsync(cancellationToken);
+    
         return items.Select(MapToDto).ToList();
     }
 
