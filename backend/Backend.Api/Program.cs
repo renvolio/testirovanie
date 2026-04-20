@@ -2,17 +2,20 @@ using System.Text.Json.Serialization;
 using Backend.Api.Data;
 using Backend.Api.Services.Dishes;
 using Backend.Api.Services.Products;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var sqliteConnectionString = ResolveSqliteConnectionString(
-    builder.Configuration.GetConnectionString("Default"),
-    builder.Environment.ContentRootPath);
+var connectionString = builder.Configuration.GetConnectionString("Default");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "Missing connection string 'ConnectionStrings:Default'. " +
+        "Set it in appsettings.json or via env var ConnectionStrings__Default.");
+}
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(sqliteConnectionString));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IDishService, DishService>();
@@ -44,7 +47,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (!builder.Configuration.GetValue<bool>("DisableHttpsRedirection"))
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors();
 
@@ -59,23 +65,3 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
-
-static string ResolveSqliteConnectionString(string? configured, string contentRoot)
-{
-    var raw = string.IsNullOrWhiteSpace(configured)
-        ? "Data Source=Data/products.db"
-        : configured;
-
-    var csb = new SqliteConnectionStringBuilder(raw);
-    var dataSource = csb.DataSource;
-    var fullPath = Path.IsPathRooted(dataSource)
-        ? dataSource
-        : Path.GetFullPath(Path.Combine(contentRoot, dataSource));
-
-    var directory = Path.GetDirectoryName(fullPath);
-    if (!string.IsNullOrEmpty(directory))
-        Directory.CreateDirectory(directory);
-
-    csb.DataSource = fullPath;
-    return csb.ConnectionString;
-}
