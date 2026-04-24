@@ -7,12 +7,12 @@ namespace Backend.Api.Tests;
 // тесты на автоматический расчёт калорийности блюда
 //
 // тут я сделал два подхода:
-// 1) эквивалентное разб.:
+// 1- эквивалентное разб.:
 //    - пустой состав
 //    - один ингредиент
 //    - несколько ингредиентов
 //    - нулевое значение на 100г
-// 2) анализ граничных значений
+// 2- анализ граничных значений
 //    - граммы около 0 и около 100 (0, 1, 99.99, 100, 101)
 
 public class DishNutritionCalculatorTests
@@ -35,10 +35,8 @@ public class DishNutritionCalculatorTests
     }
 
     [Fact]
-    /// <summary>
-    /// эквивалентный класс "пустой состав"
-    /// ожидаю нули по всем полям
-    /// </summary>
+    // эквивалентный класс "пустой состав"
+    // ожидаю нули по всем полям
     public void SumPerPortion_empty_returns_zero()
     {
         var lines = new List<(Product, double)>();
@@ -51,10 +49,8 @@ public class DishNutritionCalculatorTests
     }
 
     [Fact]
-    /// <summary>
-    /// эквивалентный класс "один ингредиент"
-    /// проверяю простую формулу на 50г
-    /// </summary>
+    // эквивалентный класс "один ингредиент"
+    // проверяю простую формулу на 50г
     public void SumPerPortion_one_line_works()
     {
         var product = P(caloriesPer100g: 200, proteinsPer100g: 10, fatsPer100g: 20, carbsPer100g: 30);
@@ -69,10 +65,8 @@ public class DishNutritionCalculatorTests
     }
 
     [Fact]
-    /// <summary>
-    /// эквивалентный класс "несколько ингредиентов"
-    /// должно просто сложиться по всем строкам
-    /// </summary>
+    // эквивалентный класс "несколько ингредиентов"
+    // должно просто сложиться по всем строкам
     public void SumPerPortion_many_lines_sums()
     {
         var a = P(caloriesPer100g: 100);
@@ -90,10 +84,8 @@ public class DishNutritionCalculatorTests
     }
 
     [Fact]
-    /// <summary>
-    /// эквивалентный класс "нулевые значения на 100г"
-    /// при любых граммах результат должен быть 0
-    /// </summary>
+    // эквивалентный класс "нулевые значения на 100г"
+    // при любых граммах результат должен быть 0
     public void SumPerPortion_zero_per100g_gives_zero()
     {
         var product = P(caloriesPer100g: 0, proteinsPer100g: 0, fatsPer100g: 0, carbsPer100g: 0);
