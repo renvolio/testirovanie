@@ -149,22 +149,18 @@ export async function renderDishForm(root, id) {
           <div class="field">
             <label for="d-kcal">Ккал</label>
             <input type="number" id="d-kcal" step="any" min="0" />
-            <p class="hint" id="d-kcal-calc" style="color:var(--color-muted)"></p>
           </div>
           <div class="field">
             <label for="d-p">Белки, г</label>
             <input type="number" id="d-p" step="any" min="0" />
-            <p class="hint" id="d-p-calc" style="color:var(--color-muted)"></p>
           </div>
           <div class="field">
             <label for="d-f">Жиры, г</label>
             <input type="number" id="d-f" step="any" min="0" />
-            <p class="hint" id="d-f-calc" style="color:var(--color-muted)"></p>
           </div>
           <div class="field">
             <label for="d-c">Углеводы, г</label>
             <input type="number" id="d-c" step="any" min="0" />
-            <p class="hint" id="d-c-calc" style="color:var(--color-muted)"></p>
           </div>
         </div>
       </fieldset>
@@ -187,10 +183,25 @@ export async function renderDishForm(root, id) {
   const form = root.querySelector("#dform");
   const errEl = root.querySelector("#dform-err");
   const compHost = root.querySelector("#d-comp-rows");
-  const kcalCalcEl = root.querySelector("#d-kcal-calc");
-  const pCalcEl = root.querySelector("#d-p-calc");
-  const fCalcEl = root.querySelector("#d-f-calc");
-  const cCalcEl = root.querySelector("#d-c-calc");
+  const kcalInput = root.querySelector("#d-kcal");
+  const pInput = root.querySelector("#d-p");
+  const fInput = root.querySelector("#d-f");
+  const cInput = root.querySelector("#d-c");
+
+  const bjuState = {
+    dirty: { kcal: false, p: false, f: false, c: false },
+    lastAuto: { kcal: null, p: null, f: null, c: null }
+  };
+
+  function markDirty(key) {
+    bjuState.dirty[key] = true;
+  }
+
+  // если пользователь что-то ввёл — больше не трогаем это поле автоподстановкой
+  kcalInput.addEventListener("input", () => markDirty("kcal"));
+  pInput.addEventListener("input", () => markDirty("p"));
+  fInput.addEventListener("input", () => markDirty("f"));
+  cInput.addEventListener("input", () => markDirty("c"));
 
   function getCompositionIds() {
     const rows = compHost.querySelectorAll("[data-row]");
@@ -230,18 +241,29 @@ export async function renderDishForm(root, id) {
     }
 
     if (!hasAny) {
-      kcalCalcEl.textContent = "";
-      pCalcEl.textContent = "";
-      fCalcEl.textContent = "";
-      cCalcEl.textContent = "";
+      bjuState.lastAuto = { kcal: null, p: null, f: null, c: null };
       return;
     }
 
     const r = (x) => Math.round(x * 10) / 10;
-    kcalCalcEl.textContent = `расчитано: ${r(kcal)}`;
-    pCalcEl.textContent = `расчитано: ${r(p)}`;
-    fCalcEl.textContent = `расчитано: ${r(f)}`;
-    cCalcEl.textContent = `расчитано: ${r(c)}`;
+    const next = { kcal: r(kcal), p: r(p), f: r(f), c: r(c) };
+
+    function setIfNotDirty(key, input, value) {
+      if (bjuState.dirty[key]) return;
+      const cur = String(input.value ?? "").trim();
+      const last = bjuState.lastAuto[key];
+      // обновляем только если поле пустое или там было прошлое авто-значение
+      if (cur === "" || (last != null && cur === String(last))) {
+        input.value = String(value);
+      }
+    }
+
+    setIfNotDirty("kcal", kcalInput, next.kcal);
+    setIfNotDirty("p", pInput, next.p);
+    setIfNotDirty("f", fInput, next.f);
+    setIfNotDirty("c", cInput, next.c);
+
+    bjuState.lastAuto = next;
   }
 
   function addRow(prefill = { productId: "", quantityGrams: "" }) {
