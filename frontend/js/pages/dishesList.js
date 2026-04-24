@@ -69,6 +69,7 @@ export async function renderDishesList(root) {
           <table class="data">
             <thead>
               <tr>
+                <th>Фото</th>
                 <th>Название</th>
                 <th>Категория</th>
                 <th>Порция, г</th>
@@ -82,6 +83,16 @@ export async function renderDishesList(root) {
                 .map(
                   (d) => `
                 <tr>
+                  <td>
+                    ${(d.photoUrls && d.photoUrls.length)
+                      ? `<div class="thumb-grid">
+                           ${d.photoUrls
+                             .slice(0, 5)
+                             .map((u) => `<img src="${escapeHtml(u)}" alt="" loading="lazy" />`)
+                             .join("")}
+                         </div>`
+                      : "—"}
+                  </td>
                   <td><a href="#/dishes/${d.id}">${escapeHtml(d.name)}</a></td>
                   <td>${escapeHtml(DISH_CATEGORY[d.category] || d.category)}</td>
                   <td>${escapeHtml(String(d.portionSizeGrams))}</td>

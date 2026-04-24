@@ -284,3 +284,34 @@ table.data tr:hover td {
     grid-template-columns: 1fr;
   }
 }
+
+.thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.25rem;
+  width: 12.5rem;
+}
+
+.thumb-grid img {
+  width: 100%;
+  height: 2.15rem;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(20, 51, 42, 0.15);
+  background: var(--color-sapwood-2);
+}
+
+@media (max-width: 720px) {
+  .thumb-grid {
+    width: 10rem;
+  }
+}
+
+.truncate {
+  max-width: 100%;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}

@@ -6,6 +6,7 @@ import {
   formatDietaryFlags
 } from "../constants/labels.js";
 import { escapeHtml } from "../utils/html.js";
+import { linkHtml } from "../utils/urls.js";
 
 function categoryOptions() {
   return Object.entries(PRODUCT_CATEGORY)
@@ -105,6 +106,7 @@ export async function renderProductsList(root) {
           <table class="data">
             <thead>
               <tr>
+                <th>Фото</th>
                 <th>Название</th>
                 <th>Категория</th>
                 <th>Ккал/100г</th>
@@ -118,6 +120,16 @@ export async function renderProductsList(root) {
                 .map(
                   (p) => `
                 <tr>
+                  <td>
+                    ${(p.photoUrls && p.photoUrls.length)
+                      ? `<div class="thumb-grid">
+                           ${p.photoUrls
+                             .slice(0, 5)
+                             .map((u) => `<img src="${escapeHtml(u)}" alt="" loading="lazy" />`)
+                             .join("")}
+                         </div>`
+                      : "—"}
+                  </td>
                   <td><a href="#/products/${p.id}">${escapeHtml(p.name)}</a></td>
                   <td>${escapeHtml(PRODUCT_CATEGORY[p.category] || p.category)}</td>
                   <td>${escapeHtml(String(p.caloriesPer100g))}</td>

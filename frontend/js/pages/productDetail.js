@@ -6,6 +6,7 @@ import {
 } from "../constants/labels.js";
 import { escapeHtml, formatDate } from "../utils/html.js";
 import { openModal, closeModal } from "../ui/modal.js";
+import { linkHtml } from "../utils/urls.js";
 
 /**
  * @param {HTMLElement} root
@@ -42,7 +43,7 @@ export async function renderProductDetail(root, id) {
                  .map(
                    (u) => `
                  <div>
-                   <div class="hint"><a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a></div>
+                   <div class="hint">${linkHtml(u, 60)}</div>
                    <img src="${escapeHtml(u)}" alt="" style="max-width:100%;max-height:260px;border-radius:var(--radius-sm);border:1px solid rgba(20,51,42,0.15)" />
                  </div>
                `

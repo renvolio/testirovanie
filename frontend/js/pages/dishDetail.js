@@ -1,6 +1,7 @@
 import { api, ApiError } from "../api/client.js";
 import { DISH_CATEGORY, formatDietaryFlags } from "../constants/labels.js";
 import { escapeHtml, formatDate } from "../utils/html.js";
+import { linkHtml } from "../utils/urls.js";
 
 /**
  * @param {HTMLElement} root
@@ -44,7 +45,7 @@ export async function renderDishDetail(root, id) {
                  .map(
                    (u) => `
                  <div>
-                   <div class="hint"><a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a></div>
+                   <div class="hint">${linkHtml(u, 60)}</div>
                    <img src="${escapeHtml(u)}" alt="" style="max-width:100%;max-height:260px;border-radius:var(--radius-sm);border:1px solid rgba(20,51,42,0.15)" />
                  </div>
                `
@@ -55,7 +56,7 @@ export async function renderDishDetail(root, id) {
         <h2 style="margin-top:1.25rem;font-size:1.05rem;color:var(--color-needle)">Состав</h2>
         <div class="table-wrap" style="margin-top:0.5rem">
           <table class="data">
-            <thead><tr><th>Продукт</th><th>Г для приготовления 1 порции</th></tr></thead>
+            <thead><tr><th>Продукт</th><th>грамм</th></tr></thead>
             <tbody>${ing || `<tr><td colspan="2">—</td></tr>`}</tbody>
           </table>
         </div>

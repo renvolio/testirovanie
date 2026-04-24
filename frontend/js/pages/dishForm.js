@@ -73,7 +73,7 @@ function compositionRowHtml(productOptions) {
         </select>
       </div>
       <div class="field" style="margin:0">
-        <label class="hint">Г для приготовления 1 порции</label>
+        <label class="hint">грамм</label>
         <input type="number" class="js-qty" step="any" min="0.0001" required />
       </div>
       <button type="button" class="btn btn--ghost btn--sm js-remove">Удалить</button>
