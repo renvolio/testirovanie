@@ -22,6 +22,12 @@ internal static class DishNutritionCalculator
             carbs += product.CarbsPer100g * factor;
         }
 
-        return (calories, proteins, fats, carbs);
+        // по заданию округляем до десятых
+        return (
+            Math.Round(calories, 1),
+            Math.Round(proteins, 1),
+            Math.Round(fats, 1),
+            Math.Round(carbs, 1)
+        );
     }
 }

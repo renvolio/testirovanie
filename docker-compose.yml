@@ -24,7 +24,7 @@ services:
       DisableHttpsRedirection: "true"
       ConnectionStrings__Default: Host=db;Port=5432;Database=products;Username=postgres;Password=postgres
     ports:
-      - "5001:8080"
+      - "5051:5051"
     depends_on:
       db:
         condition: service_healthy

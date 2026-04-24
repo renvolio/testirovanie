@@ -2,20 +2,10 @@ import { api, ApiError } from "../api/client.js";
 import {
   PRODUCT_CATEGORY,
   COOKING,
-  DIETARY_FLAG_LABELS
+  formatDietaryFlags
 } from "../constants/labels.js";
 import { escapeHtml, formatDate } from "../utils/html.js";
 import { openModal, closeModal } from "../ui/modal.js";
-
-function formatFlagsNumeric(n) {
-  const v = Number(n) || 0;
-  if (!v) return "—";
-  const parts = [];
-  for (const { bit, label } of DIETARY_FLAG_LABELS) {
-    if (v & bit) parts.push(label);
-  }
-  return parts.length ? parts.join(", ") : "—";
-}
 
 /**
  * @param {HTMLElement} root
@@ -40,13 +30,25 @@ export async function renderProductDetail(root, id) {
           <dt>Белки / 100 г</dt><dd>${escapeHtml(String(p.proteinsPer100g))}</dd>
           <dt>Жиры / 100 г</dt><dd>${escapeHtml(String(p.fatsPer100g))}</dd>
           <dt>Углеводы / 100 г</dt><dd>${escapeHtml(String(p.carbsPer100g))}</dd>
-          <dt>Флаги</dt><dd>${escapeHtml(formatFlagsNumeric(p.additionalFlags))}</dd>
+          <dt>Флаги</dt><dd>${escapeHtml(formatDietaryFlags(p.additionalFlags))}</dd>
           <dt>Создан</dt><dd>${escapeHtml(formatDate(p.createdAt))}</dd>
           <dt>Изменён</dt><dd>${escapeHtml(formatDate(p.modifiedAt))}</dd>
         </dl>
         ${p.composition ? `<h2 style="margin-top:1rem;font-size:1rem;color:var(--color-needle)">Состав</h2><p style="white-space:pre-wrap">${escapeHtml(p.composition)}</p>` : ""}
         ${(p.photoUrls && p.photoUrls.length)
-          ? `<h2 style="margin-top:1rem;font-size:1rem">Фото (ссылки)</h2><ul>${p.photoUrls.map((u) => `<li><a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a></li>`).join("")}</ul>`
+          ? `<h2 style="margin-top:1rem;font-size:1rem">Фото</h2>
+             <div class="stack" style="gap:0.5rem">
+               ${p.photoUrls
+                 .map(
+                   (u) => `
+                 <div>
+                   <div class="hint"><a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a></div>
+                   <img src="${escapeHtml(u)}" alt="" style="max-width:100%;max-height:260px;border-radius:var(--radius-sm);border:1px solid rgba(20,51,42,0.15)" />
+                 </div>
+               `
+                 )
+                 .join("")}
+             </div>`
           : ""}
       </div>
     `;

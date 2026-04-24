@@ -2,7 +2,8 @@ import { api, ApiError } from "../api/client.js";
 import {
   PRODUCT_CATEGORY,
   COOKING,
-  DIETARY_FLAG_LABELS
+  DIETARY_FLAG_LABELS,
+  parseDietaryFlags
 } from "../constants/labels.js";
 import { escapeHtml } from "../utils/html.js";
 
@@ -35,7 +36,7 @@ function flagsFromCheckboxes(root) {
 }
 
 function setFlagsCheckboxes(root, flags) {
-  const n = Number(flags) || 0;
+  const n = parseDietaryFlags(flags);
   for (const { bit, key } of DIETARY_FLAG_LABELS) {
     const el = root.querySelector(`input[name="flag_${key}"]`);
     if (el) el.checked = !!(n & bit);

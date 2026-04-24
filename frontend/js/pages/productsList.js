@@ -2,7 +2,8 @@ import { api, ApiError } from "../api/client.js";
 import {
   PRODUCT_CATEGORY,
   COOKING,
-  PRODUCT_SORT
+  PRODUCT_SORT,
+  formatDietaryFlags
 } from "../constants/labels.js";
 import { escapeHtml } from "../utils/html.js";
 
@@ -108,6 +109,7 @@ export async function renderProductsList(root) {
                 <th>Категория</th>
                 <th>Ккал/100г</th>
                 <th>Б/Ж/У</th>
+                <th>Флаги</th>
                 <th></th>
               </tr>
             </thead>
@@ -120,6 +122,7 @@ export async function renderProductsList(root) {
                   <td>${escapeHtml(PRODUCT_CATEGORY[p.category] || p.category)}</td>
                   <td>${escapeHtml(String(p.caloriesPer100g))}</td>
                   <td>${p.proteinsPer100g}/${p.fatsPer100g}/${p.carbsPer100g}</td>
+                  <td>${escapeHtml(formatDietaryFlags(p.additionalFlags))}</td>
                   <td><a class="btn btn--sm btn--ghost" href="#/products/${p.id}/edit">Изменить</a></td>
                 </tr>
               `

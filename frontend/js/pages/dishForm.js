@@ -1,5 +1,5 @@
 import { api, ApiError } from "../api/client.js";
-import { DISH_CATEGORY, DIETARY_FLAG_LABELS } from "../constants/labels.js";
+import { DISH_CATEGORY, DIETARY_FLAG_LABELS, parseDietaryFlags } from "../constants/labels.js";
 import { escapeHtml } from "../utils/html.js";
 
 function dishCategoryOptions() {
@@ -30,7 +30,7 @@ function allowedFlagsFromProducts(productById, ids) {
       okV = okG = okS = false;
       break;
     }
-    const f = Number(p.additionalFlags) || 0;
+    const f = parseDietaryFlags(p.additionalFlags);
     if ((f & 1) !== 1) okV = false;
     if ((f & 2) !== 2) okG = false;
     if ((f & 4) !== 4) okS = false;
@@ -51,8 +51,8 @@ function flagsFromCheckboxes(root) {
 }
 
 function setDishFlags(root, flags, allowed) {
-  const n = Number(flags) || 0;
-  const a = Number(allowed) || 0;
+  const n = parseDietaryFlags(flags);
+  const a = parseDietaryFlags(allowed);
   for (const { bit, key } of DIETARY_FLAG_LABELS) {
     const el = root.querySelector(`input[name="dflag_${key}"]`);
     if (!el) continue;
@@ -73,7 +73,7 @@ function compositionRowHtml(productOptions) {
         </select>
       </div>
       <div class="field" style="margin:0">
-        <label class="hint">Г в порции</label>
+        <label class="hint">Г для приготовления 1 порции</label>
         <input type="number" class="js-qty" step="any" min="0.0001" required />
       </div>
       <button type="button" class="btn btn--ghost btn--sm js-remove">Удалить</button>
@@ -145,6 +145,7 @@ export async function renderDishForm(root, id) {
       <fieldset style="border:1px solid rgba(20,51,42,0.15);border-radius:var(--radius-sm);padding:0.75rem;margin:0">
         <legend style="font-weight:600;color:var(--color-needle)">КБЖУ на порцию</legend>
         <p class="hint">Оставьте поле пустым — подставится расчёт по составу после сохранения. Можно ввести своё значение.</p>
+        <p class="hint" id="d-calc-now" style="color:var(--color-muted)"></p>
         <div class="form-grid form-grid--2" style="margin-top:0.5rem">
           <div class="field"><label for="d-kcal">Ккал</label><input type="number" id="d-kcal" step="any" min="0" /></div>
           <div class="field"><label for="d-p">Белки, г</label><input type="number" id="d-p" step="any" min="0" /></div>
@@ -171,6 +172,7 @@ export async function renderDishForm(root, id) {
   const form = root.querySelector("#dform");
   const errEl = root.querySelector("#dform-err");
   const compHost = root.querySelector("#d-comp-rows");
+  const calcNowEl = root.querySelector("#d-calc-now");
 
   function getCompositionIds() {
     const rows = compHost.querySelectorAll("[data-row]");
@@ -188,6 +190,36 @@ export async function renderDishForm(root, id) {
     setDishFlags(root, current, allowed);
   }
 
+  function computeNow() {
+    const rows = compHost.querySelectorAll("[data-row]");
+    let kcal = 0, p = 0, f = 0, c = 0;
+    let hasAny = false;
+
+    for (const row of rows) {
+      const pid = row.querySelector(".js-prod")?.value;
+      const grams = Number(row.querySelector(".js-qty")?.value);
+      if (!pid) continue;
+      if (!Number.isFinite(grams) || grams <= 0) continue;
+      const prod = productById.get(pid);
+      if (!prod) continue;
+
+      hasAny = true;
+      const factor = grams / 100;
+      kcal += Number(prod.caloriesPer100g || 0) * factor;
+      p += Number(prod.proteinsPer100g || 0) * factor;
+      f += Number(prod.fatsPer100g || 0) * factor;
+      c += Number(prod.carbsPer100g || 0) * factor;
+    }
+
+    if (!hasAny) {
+      calcNowEl.textContent = "";
+      return;
+    }
+
+    const r = (x) => Math.round(x * 10) / 10;
+    calcNowEl.textContent = `расчет сейчас: ${r(kcal)} ккал, б ${r(p)} г, ж ${r(f)} г, у ${r(c)} г`;
+  }
+
   function addRow(prefill = { productId: "", quantityGrams: "" }) {
     const wrap = document.createElement("div");
     wrap.innerHTML = compositionRowHtml(productOptions);
@@ -200,9 +232,16 @@ export async function renderDishForm(root, id) {
       row.remove();
       if (!compHost.querySelector("[data-row]")) addRow();
       refreshFlagsUi();
+      computeNow();
     });
-    row.querySelector(".js-prod").addEventListener("change", refreshFlagsUi);
-    row.querySelector(".js-qty").addEventListener("input", refreshFlagsUi);
+    row.querySelector(".js-prod").addEventListener("change", () => {
+      refreshFlagsUi();
+      computeNow();
+    });
+    row.querySelector(".js-qty").addEventListener("input", () => {
+      refreshFlagsUi();
+      computeNow();
+    });
   }
 
   compHost.innerHTML = "";
@@ -233,6 +272,7 @@ export async function renderDishForm(root, id) {
   } else {
     refreshFlagsUi();
   }
+  computeNow();
 
   form.addEventListener("submit", async (ev) => {
     ev.preventDefault();

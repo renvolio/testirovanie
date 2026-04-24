@@ -36,7 +36,7 @@ export const DIETARY_FLAG_LABELS = [
 
 /** @param {number | string} flags */
 export function formatDietaryFlags(flags) {
-  const n = typeof flags === "string" ? parseEnumFlags(flags) : Number(flags);
+  const n = parseDietaryFlags(flags);
   if (!n) return "—";
   const parts = [];
   for (const { bit, label } of DIETARY_FLAG_LABELS) {
@@ -46,10 +46,15 @@ export function formatDietaryFlags(flags) {
 }
 
 /** Парсит "Vegan, GlutenFree" или число */
-function parseEnumFlags(s) {
-  if (typeof s === "number") return s;
+export function parseDietaryFlags(flags) {
+  if (flags == null) return 0;
+  if (typeof flags === "number") return flags;
+
+  const s = String(flags).trim();
+  if (!s || s === "None") return 0;
+
   let v = 0;
-  const parts = String(s).split(",").map((x) => x.trim());
+  const parts = s.split(",").map((x) => x.trim()).filter(Boolean);
   for (const p of parts) {
     const f = DIETARY_FLAG_LABELS.find((x) => x.key === p);
     if (f) v |= f.bit;

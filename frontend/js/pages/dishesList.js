@@ -1,5 +1,5 @@
 import { api, ApiError } from "../api/client.js";
-import { DISH_CATEGORY } from "../constants/labels.js";
+import { DISH_CATEGORY, formatDietaryFlags } from "../constants/labels.js";
 import { escapeHtml } from "../utils/html.js";
 
 function dishCategoryOptions() {
@@ -73,6 +73,7 @@ export async function renderDishesList(root) {
                 <th>Категория</th>
                 <th>Порция, г</th>
                 <th>Ккал/порция</th>
+                <th>Флаги</th>
                 <th></th>
               </tr>
             </thead>
@@ -85,6 +86,7 @@ export async function renderDishesList(root) {
                   <td>${escapeHtml(DISH_CATEGORY[d.category] || d.category)}</td>
                   <td>${escapeHtml(String(d.portionSizeGrams))}</td>
                   <td>${escapeHtml(String(d.caloriesPerPortion))}</td>
+                  <td>${escapeHtml(formatDietaryFlags(d.additionalFlags))}</td>
                   <td><a class="btn btn--sm btn--ghost" href="#/dishes/${d.id}/edit">Изменить</a></td>
                 </tr>
               `

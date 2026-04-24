@@ -10,8 +10,8 @@ RUN dotnet publish Backend.Api/Backend.Api.csproj -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-ENV ASPNETCORE_URLS=http://+:8080
-EXPOSE 8080
+ENV ASPNETCORE_URLS=http://+:5051
+EXPOSE 5051
 
 COPY --from=build /app/publish ./
 ENTRYPOINT ["dotnet", "Backend.Api.dll"]
