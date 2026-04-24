@@ -145,12 +145,27 @@ export async function renderDishForm(root, id) {
       <fieldset style="border:1px solid rgba(20,51,42,0.15);border-radius:var(--radius-sm);padding:0.75rem;margin:0">
         <legend style="font-weight:600;color:var(--color-needle)">КБЖУ на порцию</legend>
         <p class="hint">Оставьте поле пустым — подставится расчёт по составу после сохранения. Можно ввести своё значение.</p>
-        <p class="hint" id="d-calc-now" style="color:var(--color-muted)"></p>
         <div class="form-grid form-grid--2" style="margin-top:0.5rem">
-          <div class="field"><label for="d-kcal">Ккал</label><input type="number" id="d-kcal" step="any" min="0" /></div>
-          <div class="field"><label for="d-p">Белки, г</label><input type="number" id="d-p" step="any" min="0" /></div>
-          <div class="field"><label for="d-f">Жиры, г</label><input type="number" id="d-f" step="any" min="0" /></div>
-          <div class="field"><label for="d-c">Углеводы, г</label><input type="number" id="d-c" step="any" min="0" /></div>
+          <div class="field">
+            <label for="d-kcal">Ккал</label>
+            <input type="number" id="d-kcal" step="any" min="0" />
+            <p class="hint" id="d-kcal-calc" style="color:var(--color-muted)"></p>
+          </div>
+          <div class="field">
+            <label for="d-p">Белки, г</label>
+            <input type="number" id="d-p" step="any" min="0" />
+            <p class="hint" id="d-p-calc" style="color:var(--color-muted)"></p>
+          </div>
+          <div class="field">
+            <label for="d-f">Жиры, г</label>
+            <input type="number" id="d-f" step="any" min="0" />
+            <p class="hint" id="d-f-calc" style="color:var(--color-muted)"></p>
+          </div>
+          <div class="field">
+            <label for="d-c">Углеводы, г</label>
+            <input type="number" id="d-c" step="any" min="0" />
+            <p class="hint" id="d-c-calc" style="color:var(--color-muted)"></p>
+          </div>
         </div>
       </fieldset>
       <div class="field" style="grid-column:1/-1">
@@ -172,7 +187,10 @@ export async function renderDishForm(root, id) {
   const form = root.querySelector("#dform");
   const errEl = root.querySelector("#dform-err");
   const compHost = root.querySelector("#d-comp-rows");
-  const calcNowEl = root.querySelector("#d-calc-now");
+  const kcalCalcEl = root.querySelector("#d-kcal-calc");
+  const pCalcEl = root.querySelector("#d-p-calc");
+  const fCalcEl = root.querySelector("#d-f-calc");
+  const cCalcEl = root.querySelector("#d-c-calc");
 
   function getCompositionIds() {
     const rows = compHost.querySelectorAll("[data-row]");
@@ -212,12 +230,18 @@ export async function renderDishForm(root, id) {
     }
 
     if (!hasAny) {
-      calcNowEl.textContent = "";
+      kcalCalcEl.textContent = "";
+      pCalcEl.textContent = "";
+      fCalcEl.textContent = "";
+      cCalcEl.textContent = "";
       return;
     }
 
     const r = (x) => Math.round(x * 10) / 10;
-    calcNowEl.textContent = `расчет сейчас: ${r(kcal)} ккал, б ${r(p)} г, ж ${r(f)} г, у ${r(c)} г`;
+    kcalCalcEl.textContent = `расчитано: ${r(kcal)}`;
+    pCalcEl.textContent = `расчитано: ${r(p)}`;
+    fCalcEl.textContent = `расчитано: ${r(f)}`;
+    cCalcEl.textContent = `расчитано: ${r(c)}`;
   }
 
   function addRow(prefill = { productId: "", quantityGrams: "" }) {

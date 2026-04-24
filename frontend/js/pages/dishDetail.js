@@ -31,8 +31,8 @@ export async function renderDishDetail(root, id) {
           <dt>Порция</dt><dd>${escapeHtml(String(d.portionSizeGrams))} г</dd>
           <dt>Ккал / порция</dt><dd>${escapeHtml(String(d.caloriesPerPortion))} <span class="badge">расчёт: ${escapeHtml(String(d.suggestedCaloriesPerPortion?.toFixed?.(1) ?? d.suggestedCaloriesPerPortion))}</span></dd>
           <dt>Белки / порция</dt><dd>${escapeHtml(String(d.proteinsPerPortion))} г <span class="badge">расчёт: ${escapeHtml(String(d.suggestedProteinsPerPortion?.toFixed?.(1) ?? d.suggestedProteinsPerPortion))}</span></dd>
-          <dt>Жиры / порция</dt><dd>${escapeHtml(String(d.fatsPerPortion))} г</dd>
-          <dt>Углеводы / порция</dt><dd>${escapeHtml(String(d.carbsPerPortion))} г</dd>
+          <dt>Жиры / порция</dt><dd>${escapeHtml(String(d.fatsPerPortion))} г <span class="badge">расчёт: ${escapeHtml(String(d.suggestedFatsPerPortion?.toFixed?.(1) ?? d.suggestedFatsPerPortion))}</span></dd>
+          <dt>Углеводы / порция</dt><dd>${escapeHtml(String(d.carbsPerPortion))} г <span class="badge">расчёт: ${escapeHtml(String(d.suggestedCarbsPerPortion?.toFixed?.(1) ?? d.suggestedCarbsPerPortion))}</span></dd>
           <dt>Флаги</dt><dd>${escapeHtml(formatDietaryFlags(d.additionalFlags))}</dd>
           <dt>Доступные флаги по составу</dt><dd>${escapeHtml(formatDietaryFlags(d.allowedAdditionalFlags))}</dd>
           <dt>Создано</dt><dd>${escapeHtml(formatDate(d.createdAt))}</dd>
