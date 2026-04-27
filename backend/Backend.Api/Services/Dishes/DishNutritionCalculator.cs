@@ -4,25 +4,37 @@ namespace Backend.Api.Services.Dishes;
 
 internal static class DishNutritionCalculator
 {
-    /// <summary>
-    /// Суммирует КБЖУ на одну порцию блюда: для каждой строки состава
-    /// значение_на_100_г × количество_продукта_в_порции_г / 100, затем сумма по всем продуктам.
-    /// </summary>
     public static (double Calories, double Proteins, double Fats, double Carbs) SumPerPortion(
         IEnumerable<(Product Product, double QuantityGrams)> lines)
     {
+        var raw = lines.Select(l => (
+            l.Product.CaloriesPer100g,
+            l.Product.ProteinsPer100g,
+            l.Product.FatsPer100g,
+            l.Product.CarbsPer100g,
+            l.QuantityGrams
+        ));
+
+        return SumPerPortionRaw(raw);
+    }
+
+    // заглушка для тестов: чтобы не собирать Product
+    // формат: (ккал/100г, белки/100г, жиры/100г, углеводы/100г, граммы)
+    public static (double Calories, double Proteins, double Fats, double Carbs) SumPerPortionRaw(
+        IEnumerable<(double CaloriesPer100g, double ProteinsPer100g, double FatsPer100g, double CarbsPer100g, double QuantityGrams)> lines)
+    {
         double calories = 0, proteins = 0, fats = 0, carbs = 0;
 
-        foreach (var (product, grams) in lines)
+        foreach (var (cal100, p100, f100, c100, grams) in lines)
         {
             var factor = grams / 100.0;
-            calories += product.CaloriesPer100g * factor;
-            proteins += product.ProteinsPer100g * factor;
-            fats += product.FatsPer100g * factor;
-            carbs += product.CarbsPer100g * factor;
+            calories += cal100 * factor;
+            proteins += p100 * factor;
+            fats += f100 * factor;
+            carbs += c100 * factor;
         }
 
-        // по заданию округляем до десятых
+        // округление до десятых
         return (
             Math.Round(calories, 1),
             Math.Round(proteins, 1),
