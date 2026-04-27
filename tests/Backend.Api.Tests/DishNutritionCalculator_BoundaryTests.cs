@@ -46,7 +46,7 @@ public class DishNutritionCalculator_BoundaryTests
         {
             new object[] { -1.0, 50.0, -0.5 },
             new object[] { 0.0, 50.0, 0.0 },
-            new object[] { 0.1, 50.0, 0.1 }, // 0.05 округляется до 0.1
+            new object[] { 0.2, 50.0, 0.1 }, // 0.2 * 50 / 100 = 0.1 (ровное число)
             new object[] { 1.0, 50.0, 0.5 }
         };
     }
