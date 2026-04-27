@@ -33,3 +33,10 @@ https://aka.ms/dotnet-core-applaunch?framework=Microsoft.NETCore.App&framework_v
 
 Сборка сбой с ошибками (1) через 47,2 с
 (base) ren@MacBook-Arina Backend.Api.Tests % 
+
+ а теперь вот такая проблема, после того как ты исправил:
+ (base) ren@MacBook-Arina Backend.Api.Tests % dotnet test
+     /Users/ren/RiderProjects/testirovanie2/tests/Backend.Api.Tests/Backend.Api.Tests.csproj : error NU1201: Проект Backend.Api несовместим с net6.0 (.NETCoreApp,Version=v6.0). Проект Backend.Api поддерживает: net8.0 (.NETCoreApp,Version=v8.0)
+ 
+ Восстановление сбой с ошибками (1) через 4,4 с
+ (base) ren@MacBook-Arina Backend.Api.Tests % 
