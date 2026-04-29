@@ -82,20 +82,15 @@ public class DishNutritionCalculator_EquivalentTests
 
     [Fact]
     // эквивалентный класс отрицательных значений
-    // тут калькулятор сам не валидирует, поэтому ждём "минус" в результате
-    public void SumPerPortionRaw_negativeValues_keepsSign()
-    {
-        var lines = new List<(double, double, double, double, double)>
-        {
-            (-100, -10, -20, -30, 100) // 1 к 1
-        };
-
-        var (kcal, p, f, c) = DishNutritionCalculator.SumPerPortionRaw(lines);
-
-        Assert.Equal(-100.0, kcal);
-        Assert.Equal(-10.0, p);
-        Assert.Equal(-20.0, f);
-        Assert.Equal(-30.0, c);
-    }
+// эквивалентный класс отрицательных значений -> ожидаем ошибку
+	public void SumPerPortionRaw_negativeValues_throws()
+	{
+    	var lines = new List<(double, double, double, double, double)>
+    	{
+        	(-100, -10, -20, -30, 100)
+    	};
+	
+    	Assert.ThrowsAny<Exception>(() =>
+        	DishNutritionCalculator.SumPerPortionRaw(lines));
+	}
 }
-

@@ -27,6 +27,8 @@ internal static class DishNutritionCalculator
 
         foreach (var (cal100, p100, f100, c100, grams) in lines)
         {
+                if (grams < 0 || cal100 < 0 || p100 < 0 || f100 < 0 || c100 < 0)
+                    throw new ArgumentException("Negative values are not allowed");
             var factor = grams / 100.0;
             calories += cal100 * factor;
             proteins += p100 * factor;
