@@ -5,39 +5,39 @@ namespace Backend.Api.Tests;
 
 public class DishNutritionCalculator_BoundaryTests
 {
-    public static IEnumerable<object[]> Grams_data()
+    // Данные для успешных тестов
+    public static IEnumerable<object[]> ValidGrams_Data() => new List<object[]>
     {
-        return new List<object[]>
-        {
-            new object[] { -0.1, true },  // ожидаем ошибку
-            new object[] { 0.0, false },
-            new object[] { 0.1, false }
-        };
+        new object[] { 0.0 },
+        new object[] { 0.1 }
+    };
+
+    // Данные для тестов с ошибкой
+    public static IEnumerable<object[]> InvalidGrams_Data() => new List<object[]>
+    {
+        new object[] { -0.1 }
+    };
+
+    [Theory]
+    [MemberData(nameof(ValidGrams_Data))]
+    public void SumPerPortionRaw_ValidGrams_ReturnsCorrectValues(double grams)
+    {
+        var lines = new List<(double, double, double, double, double)> { (100, 100, 100, 100, grams) };
+
+        var (kcal, p, f, c) = DishNutritionCalculator.SumPerPortionRaw(lines);
+
+        Assert.Equal(grams, kcal);
+        Assert.Equal(grams, p);
+        Assert.Equal(grams, f);
+        Assert.Equal(grams, c);
     }
 
     [Theory]
-    [MemberData(nameof(Grams_data))]
-    // проверка веса ингредиента (grams)
-    public void SumPerPortionRaw_grams_boundaries(double grams, bool shouldThrow)
+    [MemberData(nameof(InvalidGrams_Data))]
+    public void SumPerPortionRaw_InvalidGrams_ThrowsException(double grams)
     {
-        var lines = new List<(double, double, double, double, double)>
-        {
-            (100, 100, 100, 100, grams)
-        };
+        var lines = new List<(double, double, double, double, double)> { (100, 100, 100, 100, grams) };
 
-        if (shouldThrow)
-        {
-            Assert.ThrowsAny<Exception>(() =>
-                DishNutritionCalculator.SumPerPortionRaw(lines));
-        }
-        else
-        {
-            var (kcal, p, f, c) = DishNutritionCalculator.SumPerPortionRaw(lines);
-
-            Assert.Equal(grams, kcal);
-            Assert.Equal(grams, p);
-            Assert.Equal(grams, f);
-            Assert.Equal(grams, c);
-        }
+        Assert.ThrowsAny<Exception>(() => DishNutritionCalculator.SumPerPortionRaw(lines));
     }
 }
